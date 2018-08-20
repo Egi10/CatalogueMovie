@@ -1,28 +1,28 @@
 <resources>
-    <string name="app_name">Catalogue Movie</string>
+    <string name="app_name">Film Katalog</string>
     <string name="search">Search</string>
     <string name="title_activity_detail_movie">DetailMovieActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="vote_average">Vote Average</string>
-    <string name="vote_count">Vote Count</string>
-    <string name="popularity">Popularity</string>
+    <string name="vote_average">Pilih Rata-Rata</string>
+    <string name="vote_count">Hitung Suara</string>
+    <string name="popularity">Kepopuleran</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="now_playing">Now Playing</string>
-    <string name="up_coming">Up Coming</string>
-    <string name="setting">Setting</string>
+    <string name="now_playing">Dimainkan</string>
+    <string name="up_coming">Mendatang</string>
+    <string name="setting">Pengaturan</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="nowplaying">NOW PLAYING</string>
-    <string name="upcoming">UPCOMING</string>
-    <string name="exit">Are you sure you want to leave ?</string>
-    <string name="yes">Yes</string>
-    <string name="cancel">Cancel</string>
-    <string name="home">Home</string>
-    <string name="langguage">This Application Only Supports English and Indonesian Language</string>
+    <string name="nowplaying">DIMAINKAN</string>
+    <string name="upcoming">MENDATANG</string>
+    <string name="exit">Yakin Ingin Keluar ?</string>
+    <string name="yes">Iya</string>
+    <string name="cancel">Batal</string>
+    <string name="home">Beranda</string>
+    <string name="langguage">Aplikasi Ini Hanya Mendukung Untuk Bahasa Inggris Dan Bahasa Indonesia</string>
 </resources>

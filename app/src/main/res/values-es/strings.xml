@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Catalogue Movie</string>
+    <string name="app_name">Film Katalog</string>
     <string name="search">Search</string>
     <string name="title_activity_detail_movie">DetailMovieActivity</string>
     <string name="action_settings">Settings</string>

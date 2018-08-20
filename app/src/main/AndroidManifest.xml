@@ -18,16 +18,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.main.MainActivity" />
-        <activity
-            android:name=".ui.activity.detailmovie.DetailMovieActivity"
-            android:label="@string/title_activity_detail_movie"
+        <activity android:name=".ui.activity.searchmovie.SearchActivity"
             android:theme="@style/AppTheme"
             android:parentActivityName=".ui.activity.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activity.main.MainActivity"/>
+                android:value=".ui.activity.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.activity.detailmovie.DetailMovieActivity"
+            android:label="@string/title_activity_detail_movie"
+            android:parentActivityName=".ui.activity.main.MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activity.main.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.activity.main.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

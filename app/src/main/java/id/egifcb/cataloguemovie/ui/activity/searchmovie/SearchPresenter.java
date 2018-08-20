@@ -1,4 +1,4 @@
-package id.egifcb.cataloguemovie.ui.activity.main;
+package id.egifcb.cataloguemovie.ui.activity.searchmovie;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -6,24 +6,24 @@ import android.util.Log;
 import java.util.Locale;
 
 import id.egifcb.cataloguemovie.BuildConfig;
-import id.egifcb.cataloguemovie.api.Network;
-import id.egifcb.cataloguemovie.api.Routes;
+import id.egifcb.cataloguemovie.api.ApiConfig;
+import id.egifcb.cataloguemovie.api.ApiInterface;
 import id.egifcb.cataloguemovie.model.Value;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainPresenter {
-    private MainView mainView;
+public class SearchPresenter {
+    private SearchView searchView;
 
-    MainPresenter(MainView mainView) {
-        this.mainView = mainView;
+    SearchPresenter(SearchView searchView) {
+        this.searchView = searchView;
     }
 
     public void getList(String query) {
-        mainView.showLoading();
+        searchView.showLoading();
 
-        Routes api = Network.getNework().create(Routes.class);
+        ApiInterface api = ApiConfig.getNework().create(ApiInterface.class);
         Call<Value> call = api.getSearchMovie(BuildConfig.API_KEY, Locale.getDefault().toString(), query);
         call.enqueue(new Callback<Value>() {
             @Override
@@ -32,15 +32,15 @@ public class MainPresenter {
                     if (response.body().getResult().size() <= 0) {
                         Log.d("Presenter", "Tidak Ada Movie");
                     } else {
-                        mainView.showList(response.body().getResult());
-                        mainView.hideLoading();
+                        searchView.showList(response.body().getResult());
+                        searchView.hideLoading();
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Value> call, @NonNull Throwable t) {
-                mainView.hideLoading();
+                searchView.hideLoading();
             }
         });
     }
