@@ -22,6 +22,7 @@ import android.view.MenuItem;
 
 import id.egifcb.cataloguemovie.R;
 import id.egifcb.cataloguemovie.ui.activity.searchmovie.SearchActivity;
+import id.egifcb.cataloguemovie.ui.fragment.favorite.FavoriteFragment;
 import id.egifcb.cataloguemovie.ui.fragment.home.HomeFragment;
 import id.egifcb.cataloguemovie.ui.fragment.nowplayingmovie.NowPlayingFragment;
 import id.egifcb.cataloguemovie.ui.fragment.upcomingmovie.UpComingFragment;
@@ -171,6 +172,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_upComing:
                 setTitle(getResources().getString(R.string.up_coming));
                 fragment = new UpComingFragment();
+                view = false;
+                break;
+
+            case R.id.nav_favorite:
+                setTitle(getString(R.string.favorite));
+                fragment = new FavoriteFragment();
                 view = false;
                 break;
         }

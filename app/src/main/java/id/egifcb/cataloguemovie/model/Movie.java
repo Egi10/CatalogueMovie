@@ -6,7 +6,7 @@ public class Movie {
     @SerializedName("vote_count")
     private String voteCount;
     @SerializedName("id")
-    private String id;
+    private int id;
     @SerializedName("video")
     private String video;
     @SerializedName("vote_average")
@@ -40,11 +40,11 @@ public class Movie {
         this.voteCount = voteCount;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

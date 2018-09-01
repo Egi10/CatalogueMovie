@@ -25,4 +25,7 @@
     <string name="cancel">Cancel</string>
     <string name="home">Home</string>
     <string name="langguage">This Application Only Supports English and Indonesian Language</string>
+    <string name="favorite">Favorite</string>
+    <string name="hapus_favorite">Hapus Favorite</string>
+    <string name="sukses_favorite">Sukses Favorite</string>
 </resources>

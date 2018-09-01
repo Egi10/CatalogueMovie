@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,12 +24,15 @@ import java.util.Objects;
 
 import id.egifcb.cataloguemovie.BuildConfig;
 import id.egifcb.cataloguemovie.R;
+import id.egifcb.cataloguemovie.db.MovieHelper;
+import id.egifcb.cataloguemovie.model.Movie;
 import id.egifcb.cataloguemovie.ui.activity.main.MainActivity;
 
 public class DetailMovieActivity extends AppCompatActivity {
     TextView tvVoteCount, tvVoteAverage, tvPopularity, tvOverview, tvTitle, tvReleaseDate;
     ImageView ivBackdropPath, ivPosterPath;
 
+    public static String _ID = "_id";
     public static String TITLE = "title";
     public static String VOTE_COUNT = "vote_count";
     public static String VOTE_AVERAGE = "vote_average";
@@ -37,6 +41,16 @@ public class DetailMovieActivity extends AppCompatActivity {
     public static String BACKDROP_PATH = "backdrop_path";
     public static String POSTER_PATH = "poster_path";
     public static String RELEASE_DATE = "release_date";
+
+    private String title, voteCount, voteAverange, popularity, overview, backdropPath, posterPath, releaseDate;
+    private int id;
+
+    private Movie movie;
+    private MovieHelper movieHelper;
+
+    FloatingActionButton floatingActionButton;
+
+    private boolean favorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         collapsingToolbarLayout.setExpandedTitleGravity(Gravity.BOTTOM);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
+        floatingActionButton = findViewById(R.id.fab);
         tvVoteCount = findViewById(R.id.tv_vote_count);
         tvVoteAverage = findViewById(R.id.tv_vote_average);
         tvPopularity = findViewById(R.id.tv_popularity);
@@ -61,48 +76,99 @@ public class DetailMovieActivity extends AppCompatActivity {
         tvTitle = findViewById(R.id.tv_title);
         tvReleaseDate = findViewById(R.id.tv_release_date);
 
+        movieHelper = new MovieHelper(this);
+        movieHelper.open();
+
         Intent intent = getIntent();
         if (intent != null) {
-            setTitle(intent.getStringExtra(TITLE));
-            tvVoteCount.setText(intent.getStringExtra(VOTE_COUNT));
-            tvVoteAverage.setText(intent.getStringExtra(VOTE_AVERAGE));
-            tvPopularity.setText(intent.getStringExtra(POPULARITY));
-            tvOverview.setText(intent.getStringExtra(OVERVIEW));
-            Glide.with(getBaseContext())
-                    .load(BuildConfig.IMG_URL+""+intent.getStringExtra(BACKDROP_PATH))
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
-                    .into(ivBackdropPath);
-            Glide.with(getBaseContext())
-                    .load(BuildConfig.IMG_URL+""+intent.getStringExtra(POSTER_PATH))
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
-                    .into(ivPosterPath);
-            tvTitle.setText(intent.getStringExtra(TITLE));
-
-            String dateInput = intent.getStringExtra(RELEASE_DATE);
-            SimpleDateFormat simpleDateFormatInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat simpleDateFormatOutput = new SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault());
-            Date date;
-            String dateOutput = null;
-            try {
-                date = simpleDateFormatInput.parse(dateInput);
-                dateOutput = simpleDateFormatOutput.format(date);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            tvReleaseDate.setText(dateOutput);
+            title = intent.getStringExtra(TITLE);
+            voteCount = intent.getStringExtra(VOTE_COUNT);
+            voteAverange = intent.getStringExtra(VOTE_AVERAGE);
+            popularity = intent.getStringExtra(POPULARITY);
+            overview = intent.getStringExtra(OVERVIEW);
+            backdropPath = intent.getStringExtra(BACKDROP_PATH);
+            posterPath = intent.getStringExtra(POSTER_PATH);
+            releaseDate = intent.getStringExtra(RELEASE_DATE);
+            id = intent.getIntExtra(_ID, 0);
         }
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
+        setTitle(title);
+        tvVoteCount.setText(voteCount);
+        tvVoteAverage.setText(voteAverange);
+        tvPopularity.setText(popularity);
+        tvOverview.setText(overview);
+        Glide.with(getBaseContext())
+                .load(BuildConfig.IMG_URL+""+backdropPath)
+                .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
+                .into(ivBackdropPath);
+        Glide.with(getBaseContext())
+                .load(BuildConfig.IMG_URL+""+posterPath)
+                .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
+                .into(ivPosterPath);
+        tvTitle.setText(title);
+
+        String dateInput = releaseDate;
+        SimpleDateFormat simpleDateFormatInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat simpleDateFormatOutput = new SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault());
+        Date date;
+        String dateOutput = null;
+        try {
+            date = simpleDateFormatInput.parse(dateInput);
+            dateOutput = simpleDateFormatOutput.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        tvReleaseDate.setText(dateOutput);
+
+        int cekFavorite = movieHelper.queryById(String.valueOf(id)).getCount();
+
+        if (cekFavorite > 0) {
+            favorite = true;
+            floatingActionButton.setImageResource(R.drawable.ic_favorite);
+        } else {
+            favorite = false;
+            floatingActionButton.setImageResource(R.drawable.ic_no_favorite);
+        }
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, tvTitle.getText().toString());
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
+//                Intent sendIntent = new Intent();
+//                sendIntent.setAction(Intent.ACTION_SEND);
+//                sendIntent.putExtra(Intent.EXTRA_TEXT, tvTitle.getText().toString());
+//                sendIntent.setType("text/plain");
+//                startActivity(sendIntent);
+                if (!favorite) {
+                    floatingActionButton.setImageResource(R.drawable.ic_favorite);
+                    movie = new Movie();
+                    movie.setId(id);
+                    movie.setTitle(title);
+                    movie.setVoteCount(voteCount);
+                    movie.setVoteAverage(voteAverange);
+                    movie.setPopularity(popularity);
+                    movie.setOverview(overview);
+                    movie.setBackdropPath(backdropPath);
+                    movie.setPosterPath(posterPath);
+                    movie.setReleaseDate(releaseDate);
+                    movieHelper.insert(movie);
+
+                    Toast.makeText(getBaseContext(), R.string.sukses_favorite, Toast.LENGTH_SHORT).show();
+                } else {
+                    floatingActionButton.setImageResource(R.drawable.ic_no_favorite);
+                    movieHelper.delete(id);
+
+                    Toast.makeText(getBaseContext(), R.string.hapus_favorite, Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (movieHelper != null) {
+            movieHelper.close();
+        }
     }
 
     @Override

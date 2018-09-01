@@ -56,6 +56,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailMovieActivity.class);
+                intent.putExtra(DetailMovieActivity._ID, movie.getId());
                 intent.putExtra(DetailMovieActivity.TITLE, movie.getTitle());
                 intent.putExtra(DetailMovieActivity.VOTE_COUNT, movie.getVoteCount());
                 intent.putExtra(DetailMovieActivity.VOTE_AVERAGE, movie.getVoteAverage());
