@@ -1,6 +1,7 @@
 package id.egifcb.cataloguemovie.ui.fragment.favorite;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,14 +18,17 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import id.egifcb.cataloguemovie.R;
+import id.egifcb.cataloguemovie.adapter.FavoriteMovieAdapter;
 import id.egifcb.cataloguemovie.adapter.MovieAdapter;
 import id.egifcb.cataloguemovie.db.MovieHelper;
 import id.egifcb.cataloguemovie.model.Movie;
 
+import static id.egifcb.cataloguemovie.db.DatabaseContract.CONTENT_URI;
+
 public class FavoriteFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ArrayList<Movie> listFavorite;
-    private MovieAdapter movieAdapter;
+    private Cursor listFavorite;
+    private FavoriteMovieAdapter movieAdapter;
     private MovieHelper movieHelper;
 
     @Override
@@ -44,7 +48,6 @@ public class FavoriteFragment extends Fragment {
 
         movieHelper = new MovieHelper(getContext());
         movieHelper.open();
-        listFavorite = new ArrayList<>();
 
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -60,34 +63,30 @@ public class FavoriteFragment extends Fragment {
             }
         });
 
-        movieAdapter = new MovieAdapter(getContext());
+        movieAdapter = new FavoriteMovieAdapter(getContext());
         movieAdapter.setListMovie(listFavorite);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerView.setAdapter(movieAdapter);
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class loadMoviewAsync extends AsyncTask<Void, Void, ArrayList<Movie>> {
+    private class loadMoviewAsync extends AsyncTask<Void, Void, Cursor> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             swipeRefreshLayout.setRefreshing(true);
-
-            if (listFavorite.size() > 0) {
-                listFavorite.clear();
-            }
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> list) {
+        protected void onPostExecute(Cursor list) {
             super.onPostExecute(list);
             swipeRefreshLayout.setRefreshing(false);
 
-            listFavorite.addAll(list);
+            listFavorite = list;
             movieAdapter.setListMovie(listFavorite);
             movieAdapter.notifyDataSetChanged();
 
-            if (listFavorite.size() == 0) {
+            if (listFavorite.getCount() == 0) {
                 Toast.makeText(getContext(), "Tidak Ada Data", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Ada Data", Toast.LENGTH_SHORT).show();
@@ -95,8 +94,9 @@ public class FavoriteFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<Movie> doInBackground(Void... voids) {
-            return movieHelper.query();
+        protected Cursor doInBackground(Void... voids) {
+            return getContext().getContentResolver().query(CONTENT_URI, null, null,
+                    null, null);
         }
     }
 }

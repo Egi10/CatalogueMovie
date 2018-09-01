@@ -3,6 +3,8 @@
     package="id.egifcb.cataloguemovie">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission android:name="id.egifcb.cataloguemovie.READ_DATABASE" android:protectionLevel="normal" />
+    <permission android:name="id.egifcb.cataloguemovie.WRITE_DATABASE" android:protectionLevel="normal" />
 
     <application
         android:allowBackup="true"
@@ -38,6 +40,13 @@
             android:name=".ui.activity.main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme"></activity>
+
+        <provider
+            android:authorities="id.egifcb.cataloguemovie"
+            android:name=".db.NoteProvider"
+            android:exported="true"
+            android:readPermission="id.egifcb.cataloguemovie.READ_DATABASE"
+            android:writePermission="id.egifcb.cataloguemovie.WRITE_DATABASE" />
     </application>
 
 </manifest>

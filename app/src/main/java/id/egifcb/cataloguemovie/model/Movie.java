@@ -1,6 +1,20 @@
 package id.egifcb.cataloguemovie.model;
 
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
+
+import static id.egifcb.cataloguemovie.db.DatabaseContract.getColumnInt;
+import static id.egifcb.cataloguemovie.db.DatabaseContract.getColumnString;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.BACKDROP_PATH;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.OVERVIEW;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.POPULARITY;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.POSTER_PATH;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.RELEASE_DATE;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.TITLE;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.VOTE_AVERAGE;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity.VOTE_COUNT;
+import static id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity._ID;
 
 public class Movie {
     @SerializedName("vote_count")
@@ -143,4 +157,18 @@ public class Movie {
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
+
+    public Movie(Cursor cursor) {
+        this.voteCount = getColumnString(cursor, VOTE_COUNT);
+        this.id = getColumnInt(cursor, _ID);
+        this.voteAverage = getColumnString(cursor, VOTE_AVERAGE);
+        this.title = getColumnString(cursor, TITLE);
+        this.popularity = getColumnString(cursor, POPULARITY);
+        this.posterPath = getColumnString(cursor, POSTER_PATH);
+        this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
+        this.overview = getColumnString(cursor, OVERVIEW);
+        this.releaseDate = getColumnString(cursor, RELEASE_DATE);
+    }
+
+
 }

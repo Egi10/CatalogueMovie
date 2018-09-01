@@ -21,19 +21,15 @@ import id.egifcb.cataloguemovie.R;
 import id.egifcb.cataloguemovie.model.Movie;
 import id.egifcb.cataloguemovie.ui.activity.detailmovie.DetailMovieActivity;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
-    private ArrayList<Movie> listMovie;
+public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdapter.ViewHolder> {
+    private Cursor listMovie;
     private Context context;
 
-    public MovieAdapter(Context context) {
+    public FavoriteMovieAdapter(Context context) {
         this.context = context;
     }
 
-    private ArrayList<Movie> getListMovie() {
-        return listMovie;
-    }
-
-    public void setListMovie(ArrayList<Movie> listMovie) {
+    public void setListMovie(Cursor listMovie) {
         this.listMovie = listMovie;
     }
 
@@ -46,7 +42,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Movie movie = getListMovie().get(position);
+        final Movie movie = getItem(position);
 
         Glide.with(context)
                 .load(BuildConfig.IMG_URL+""+movie.getPosterPath())
@@ -71,9 +67,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         });
     }
 
+    private Movie getItem(int position) {
+        if (!listMovie.moveToPosition(position)) {
+            throw new IllegalStateException("Position invalid");
+        }
+        return new Movie(listMovie);
+    }
+
     @Override
     public int getItemCount() {
-        return getListMovie().size();
+        if (listMovie == null) {
+            return 0;
+        }
+        return listMovie.getCount();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
