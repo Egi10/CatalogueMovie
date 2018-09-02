@@ -1,7 +1,5 @@
 package id.egifcb.cataloguemovie.api;
 
-import com.google.gson.Gson;
-
 import id.egifcb.cataloguemovie.BuildConfig;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

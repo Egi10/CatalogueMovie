@@ -50,13 +50,11 @@ public class DetailMovieActivity extends AppCompatActivity {
     private String title, voteCount, voteAverange, popularity, overview, backdropPath, posterPath, releaseDate;
     private int id;
 
-    private Movie movie;
     private MovieHelper movieHelper;
 
     FloatingActionButton floatingActionButton;
 
     private boolean favorite = false;
-    private Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +90,7 @@ public class DetailMovieActivity extends AppCompatActivity {
                     , null, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    movie = new Movie(cursor);
+                    Movie movie = new Movie(cursor);
                 }
                 cursor.close();
             }
@@ -152,11 +150,6 @@ public class DetailMovieActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent sendIntent = new Intent();
-//                sendIntent.setAction(Intent.ACTION_SEND);
-//                sendIntent.putExtra(Intent.EXTRA_TEXT, tvTitle.getText().toString());
-//                sendIntent.setType("text/plain");
-//                startActivity(sendIntent);
                 if (!favorite) {
                     floatingActionButton.setImageResource(R.drawable.ic_favorite);
                     ContentValues values = new ContentValues();

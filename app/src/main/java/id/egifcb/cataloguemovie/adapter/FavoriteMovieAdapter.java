@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import java.util.ArrayList;
-
 import id.egifcb.cataloguemovie.BuildConfig;
 import id.egifcb.cataloguemovie.R;
 import id.egifcb.cataloguemovie.model.Movie;

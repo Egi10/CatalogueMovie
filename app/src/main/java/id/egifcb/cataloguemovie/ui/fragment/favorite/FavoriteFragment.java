@@ -13,15 +13,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import id.egifcb.cataloguemovie.R;
 import id.egifcb.cataloguemovie.adapter.FavoriteMovieAdapter;
-import id.egifcb.cataloguemovie.adapter.MovieAdapter;
 import id.egifcb.cataloguemovie.db.MovieHelper;
-import id.egifcb.cataloguemovie.model.Movie;
 
 import static id.egifcb.cataloguemovie.db.DatabaseContract.CONTENT_URI;
 
@@ -29,7 +26,9 @@ public class FavoriteFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private Cursor listFavorite;
     private FavoriteMovieAdapter movieAdapter;
-    private MovieHelper movieHelper;
+    private LinearLayout linearLayout;
+    private RecyclerView recyclerView;
+    private TextView tvTitle, tvSubTitle;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -42,11 +41,14 @@ public class FavoriteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        linearLayout = view.findViewById(R.id.ll_empty);
+        tvTitle = view.findViewById(R.id.tv_title);
+        tvSubTitle = view.findViewById(R.id.tv_sub_title);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
-        movieHelper = new MovieHelper(getContext());
+        MovieHelper movieHelper = new MovieHelper(getContext());
         movieHelper.open();
 
         swipeRefreshLayout.post(new Runnable() {
@@ -87,9 +89,14 @@ public class FavoriteFragment extends Fragment {
             movieAdapter.notifyDataSetChanged();
 
             if (listFavorite.getCount() == 0) {
-                Toast.makeText(getContext(), "Tidak Ada Data", Toast.LENGTH_SHORT).show();
+                linearLayout.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+
+                tvTitle.setText(R.string.no_favorite);
+                tvSubTitle.setText(R.string.subtitle_no_favorite);
             } else {
-                Toast.makeText(getContext(), "Ada Data", Toast.LENGTH_SHORT).show();
+                linearLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
             }
         }
 
