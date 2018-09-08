@@ -2,13 +2,16 @@ package id.egifcb.cataloguemovie.ui.activity.searchmovie;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -41,18 +44,44 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
 
         listMovie = new ArrayList<>();
         mainPresenter = new SearchPresenter(this);
-
         final String query = getIntent().getStringExtra("keyword");
-        setTitle(query);
 
-        swipeRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                mainPresenter.getList(query);
-            }
-        });
+        if (savedInstanceState != null && savedInstanceState.containsKey("data_result")) {
+            setTitle(query);
+            listMovie = savedInstanceState.getParcelableArrayList("data_result");
+            swipeRefresh.setRefreshing(false);
+            loadMovie();
 
-        loadMovie();
+        } else if (savedInstanceState != null && savedInstanceState.containsKey("data_recycler_view")) {
+            setTitle(query);
+            Parcelable parcelable = savedInstanceState.getParcelable("data_recycler_view");
+            swipeRefresh.setRefreshing(false);
+            recyclerView.getLayoutManager().onRestoreInstanceState(parcelable);
+        }
+
+        if (savedInstanceState == null) {
+            setTitle(query);
+
+            swipeRefresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    mainPresenter.getList(query);
+                }
+            });
+
+            loadMovie();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (listMovie != null) {
+            outState.putParcelableArrayList("data_result", listMovie);
+        }
+        if (recyclerView.getLayoutManager() != null) {
+            outState.putParcelable("data_recycler_view", recyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     @Override
@@ -70,6 +99,16 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         listMovie.clear();
         listMovie.addAll(list);
         movieAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void showListEmpty() {
+        Toast.makeText(getBaseContext(), R.string.messageEmpty, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showFailure(String message) {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void loadMovie() {

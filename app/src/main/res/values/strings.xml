@@ -30,4 +30,8 @@
     <string name="sukses_favorite">Sukses Favorite</string>
     <string name="no_favorite">No Favorites</string>
     <string name="subtitle_no_favorite">You have not saved a movie as a favorite</string>
+    <string name="messageEmpty">Tidak Ada Data Movie Yang Anda Cari</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="tidak_ada_movie">Tidak Ada Movie</string>
 </resources>

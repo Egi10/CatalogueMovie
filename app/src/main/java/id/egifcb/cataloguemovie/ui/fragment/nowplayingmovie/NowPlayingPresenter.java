@@ -1,13 +1,6 @@
 package id.egifcb.cataloguemovie.ui.fragment.nowplayingmovie;
 
-import android.content.Context;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
-
 import java.util.Locale;
-import java.util.Objects;
-
 import id.egifcb.cataloguemovie.BuildConfig;
 import id.egifcb.cataloguemovie.api.ApiConfig;
 import id.egifcb.cataloguemovie.api.ApiInterface;
@@ -18,11 +11,9 @@ import retrofit2.Response;
 
 public class NowPlayingPresenter {
     private NowPlayingView nowPlayingView;
-    private Context context;
 
-    NowPlayingPresenter(NowPlayingView nowPlayingView, Context context) {
+    public NowPlayingPresenter(NowPlayingView nowPlayingView) {
         this.nowPlayingView = nowPlayingView;
-        this.context = context;
     }
 
     public void getListNowPlaying() {
@@ -32,23 +23,20 @@ public class NowPlayingPresenter {
         Call<Value> call = api.getNowPlaying(BuildConfig.API_KEY, Locale.getDefault().toString());
         call.enqueue(new Callback<Value>() {
             @Override
-            public void onResponse(@NonNull Call<Value> call, @NonNull Response<Value> response) {
+            public void onResponse(Call<Value> call, Response<Value> response) {
                 nowPlayingView.hideLoading();
 
                 if (response.isSuccessful()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        nowPlayingView.showList(Objects.requireNonNull(response.body()).getResult());
-                    }
+                    nowPlayingView.showList(response.body().getResult());
                 } else {
-                    Toast.makeText(context, "Maaf Terdapat Kesalahan", Toast.LENGTH_SHORT).show();
+                    nowPlayingView.showNotList(response.message());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Value> call, @NonNull Throwable t) {
+            public void onFailure(Call<Value> call, Throwable t) {
                 nowPlayingView.hideLoading();
-
-                Toast.makeText(context, "Jaringan Tidak Ada", Toast.LENGTH_SHORT).show();
+                nowPlayingView.showFailure(t.getMessage());
             }
         });
     }

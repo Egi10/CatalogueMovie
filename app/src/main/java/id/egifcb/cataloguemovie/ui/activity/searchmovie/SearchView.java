@@ -8,4 +8,6 @@ interface SearchView {
     void showLoading();
     void hideLoading();
     void showList(ArrayList<Movie> list);
+    void showListEmpty();
+    void showFailure(String message);
 }
