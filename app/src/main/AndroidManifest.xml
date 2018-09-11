@@ -3,6 +3,8 @@
     package="id.egifcb.cataloguemovie">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <permission
         android:name="id.egifcb.cataloguemovie.READ_DATABASE"
@@ -64,8 +66,29 @@
                 android:resource="@xml/favorite_widget_info" />
         </receiver>
 
-        <service android:name=".widget.StackWidgetService"
+        <service
+            android:name=".widget.StackWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".broadcast.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <activity
+            android:name=".ui.activity.setting.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppThemeActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activity.main.MainActivity" />
+        </activity>
+
+        <service android:name=".service.scheduler.SchedulerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
