@@ -8,4 +8,6 @@ public interface NowPlayingView {
     void showLoading();
     void hideLoading();
     void showList(ArrayList<Movie> list);
+    void showNotList(String message);
+    void showFailure(String message);
 }

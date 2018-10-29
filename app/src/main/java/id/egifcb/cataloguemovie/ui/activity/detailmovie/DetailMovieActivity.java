@@ -1,6 +1,9 @@
 package id.egifcb.cataloguemovie.ui.activity.detailmovie;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -28,6 +31,8 @@ import id.egifcb.cataloguemovie.db.MovieHelper;
 import id.egifcb.cataloguemovie.model.Movie;
 import id.egifcb.cataloguemovie.ui.activity.main.MainActivity;
 
+import static id.egifcb.cataloguemovie.db.DatabaseContract.CONTENT_URI;
+
 public class DetailMovieActivity extends AppCompatActivity {
     TextView tvVoteCount, tvVoteAverage, tvPopularity, tvOverview, tvTitle, tvReleaseDate;
     ImageView ivBackdropPath, ivPosterPath;
@@ -45,7 +50,6 @@ public class DetailMovieActivity extends AppCompatActivity {
     private String title, voteCount, voteAverange, popularity, overview, backdropPath, posterPath, releaseDate;
     private int id;
 
-    private Movie movie;
     private MovieHelper movieHelper;
 
     FloatingActionButton floatingActionButton;
@@ -79,6 +83,19 @@ public class DetailMovieActivity extends AppCompatActivity {
         movieHelper = new MovieHelper(this);
         movieHelper.open();
 
+        Uri uri = getIntent().getData();
+
+        if (uri != null) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null
+                    , null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    Movie movie = new Movie(cursor);
+                }
+                cursor.close();
+            }
+        }
+
         Intent intent = getIntent();
         if (intent != null) {
             title = intent.getStringExtra(TITLE);
@@ -98,11 +115,11 @@ public class DetailMovieActivity extends AppCompatActivity {
         tvPopularity.setText(popularity);
         tvOverview.setText(overview);
         Glide.with(getBaseContext())
-                .load(BuildConfig.IMG_URL+""+backdropPath)
+                .load(BuildConfig.IMG_URL + "" + backdropPath)
                 .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
                 .into(ivBackdropPath);
         Glide.with(getBaseContext())
-                .load(BuildConfig.IMG_URL+""+posterPath)
+                .load(BuildConfig.IMG_URL + "" + posterPath)
                 .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background).centerCrop())
                 .into(ivPosterPath);
         tvTitle.setText(title);
@@ -120,7 +137,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         }
         tvReleaseDate.setText(dateOutput);
 
-        int cekFavorite = movieHelper.queryById(String.valueOf(id)).getCount();
+        int cekFavorite = movieHelper.queryByIdProvider(String.valueOf(id)).getCount();
 
         if (cekFavorite > 0) {
             favorite = true;
@@ -133,29 +150,24 @@ public class DetailMovieActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent sendIntent = new Intent();
-//                sendIntent.setAction(Intent.ACTION_SEND);
-//                sendIntent.putExtra(Intent.EXTRA_TEXT, tvTitle.getText().toString());
-//                sendIntent.setType("text/plain");
-//                startActivity(sendIntent);
                 if (!favorite) {
                     floatingActionButton.setImageResource(R.drawable.ic_favorite);
-                    movie = new Movie();
-                    movie.setId(id);
-                    movie.setTitle(title);
-                    movie.setVoteCount(voteCount);
-                    movie.setVoteAverage(voteAverange);
-                    movie.setPopularity(popularity);
-                    movie.setOverview(overview);
-                    movie.setBackdropPath(backdropPath);
-                    movie.setPosterPath(posterPath);
-                    movie.setReleaseDate(releaseDate);
-                    movieHelper.insert(movie);
+                    ContentValues values = new ContentValues();
+                    values.put(_ID, id);
+                    values.put(TITLE, title);
+                    values.put(VOTE_COUNT, voteCount);
+                    values.put(VOTE_AVERAGE, voteAverange);
+                    values.put(POPULARITY, popularity);
+                    values.put(OVERVIEW, overview);
+                    values.put(BACKDROP_PATH, backdropPath);
+                    values.put(POSTER_PATH, posterPath);
+                    values.put(RELEASE_DATE, releaseDate);
+                    getContentResolver().insert(CONTENT_URI, values);
 
                     Toast.makeText(getBaseContext(), R.string.sukses_favorite, Toast.LENGTH_SHORT).show();
                 } else {
                     floatingActionButton.setImageResource(R.drawable.ic_no_favorite);
-                    movieHelper.delete(id);
+                    movieHelper.deleteProvider(String.valueOf(id));
 
                     Toast.makeText(getBaseContext(), R.string.hapus_favorite, Toast.LENGTH_SHORT).show();
                 }

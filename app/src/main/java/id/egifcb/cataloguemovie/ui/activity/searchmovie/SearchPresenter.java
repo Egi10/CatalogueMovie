@@ -1,8 +1,5 @@
 package id.egifcb.cataloguemovie.ui.activity.searchmovie;
 
-import android.support.annotation.NonNull;
-import android.util.Log;
-
 import java.util.Locale;
 
 import id.egifcb.cataloguemovie.BuildConfig;
@@ -27,10 +24,10 @@ public class SearchPresenter {
         Call<Value> call = api.getSearchMovie(BuildConfig.API_KEY, Locale.getDefault().toString(), query);
         call.enqueue(new Callback<Value>() {
             @Override
-            public void onResponse(@NonNull Call<Value> call, @NonNull Response<Value> response) {
+            public void onResponse(Call<Value> call, Response<Value> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getResult().size() <= 0) {
-                        Log.d("Presenter", "Tidak Ada Movie");
+                        searchView.showListEmpty();
                     } else {
                         searchView.showList(response.body().getResult());
                         searchView.hideLoading();
@@ -39,8 +36,9 @@ public class SearchPresenter {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Value> call, @NonNull Throwable t) {
+            public void onFailure(Call<Value> call, Throwable t) {
                 searchView.hideLoading();
+                searchView.showFailure(t.getMessage());
             }
         });
     }

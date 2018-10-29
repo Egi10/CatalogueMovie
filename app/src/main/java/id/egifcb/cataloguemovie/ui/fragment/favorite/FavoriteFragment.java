@@ -1,6 +1,7 @@
 package id.egifcb.cataloguemovie.ui.fragment.favorite;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,20 +13,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import id.egifcb.cataloguemovie.R;
-import id.egifcb.cataloguemovie.adapter.MovieAdapter;
+import id.egifcb.cataloguemovie.adapter.FavoriteMovieAdapter;
 import id.egifcb.cataloguemovie.db.MovieHelper;
-import id.egifcb.cataloguemovie.model.Movie;
+
+import static id.egifcb.cataloguemovie.db.DatabaseContract.CONTENT_URI;
 
 public class FavoriteFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ArrayList<Movie> listFavorite;
-    private MovieAdapter movieAdapter;
-    private MovieHelper movieHelper;
+    private Cursor listFavorite;
+    private FavoriteMovieAdapter movieAdapter;
+    private LinearLayout linearLayout;
+    private RecyclerView recyclerView;
+    private TextView tvTitle, tvSubTitle;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,13 +41,15 @@ public class FavoriteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        linearLayout = view.findViewById(R.id.ll_empty);
+        tvTitle = view.findViewById(R.id.tv_title);
+        tvSubTitle = view.findViewById(R.id.tv_sub_title);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
-        movieHelper = new MovieHelper(getContext());
+        MovieHelper movieHelper = new MovieHelper(getContext());
         movieHelper.open();
-        listFavorite = new ArrayList<>();
 
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -60,43 +65,45 @@ public class FavoriteFragment extends Fragment {
             }
         });
 
-        movieAdapter = new MovieAdapter(getContext());
+        movieAdapter = new FavoriteMovieAdapter(getContext());
         movieAdapter.setListMovie(listFavorite);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerView.setAdapter(movieAdapter);
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class loadMoviewAsync extends AsyncTask<Void, Void, ArrayList<Movie>> {
+    private class loadMoviewAsync extends AsyncTask<Void, Void, Cursor> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             swipeRefreshLayout.setRefreshing(true);
-
-            if (listFavorite.size() > 0) {
-                listFavorite.clear();
-            }
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> list) {
+        protected void onPostExecute(Cursor list) {
             super.onPostExecute(list);
             swipeRefreshLayout.setRefreshing(false);
 
-            listFavorite.addAll(list);
+            listFavorite = list;
             movieAdapter.setListMovie(listFavorite);
             movieAdapter.notifyDataSetChanged();
 
-            if (listFavorite.size() == 0) {
-                Toast.makeText(getContext(), "Tidak Ada Data", Toast.LENGTH_SHORT).show();
+            if (listFavorite.getCount() == 0) {
+                linearLayout.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+
+                tvTitle.setText(R.string.no_favorite);
+                tvSubTitle.setText(R.string.subtitle_no_favorite);
             } else {
-                Toast.makeText(getContext(), "Ada Data", Toast.LENGTH_SHORT).show();
+                linearLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
             }
         }
 
         @Override
-        protected ArrayList<Movie> doInBackground(Void... voids) {
-            return movieHelper.query();
+        protected Cursor doInBackground(Void... voids) {
+            return getContext().getContentResolver().query(CONTENT_URI, null, null,
+                    null, null);
         }
     }
 }

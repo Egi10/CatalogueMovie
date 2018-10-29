@@ -16,12 +16,23 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
+
 import id.egifcb.cataloguemovie.R;
+import id.egifcb.cataloguemovie.service.scheduler.SchedulerService;
 import id.egifcb.cataloguemovie.ui.activity.searchmovie.SearchActivity;
+import id.egifcb.cataloguemovie.ui.activity.setting.SettingsActivity;
 import id.egifcb.cataloguemovie.ui.fragment.favorite.FavoriteFragment;
 import id.egifcb.cataloguemovie.ui.fragment.home.HomeFragment;
 import id.egifcb.cataloguemovie.ui.fragment.nowplayingmovie.NowPlayingFragment;
@@ -49,7 +60,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        showFragment(R.id.nav_home);
+        if (savedInstanceState != null) {
+            Log.d("saved", "notNull");
+        } else {
+            showFragment(R.id.nav_home);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -107,16 +127,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_setting) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage(R.string.langguage);
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            builder.show();
+            startActivity(new Intent(this, SettingsActivity.class));
         } else {
             showFragment(id);
         }
