@@ -26,7 +26,6 @@ import id.egifcb.cataloguemovie.broadcast.AlarmReceiver;
 import id.egifcb.cataloguemovie.service.scheduler.SchedulerService;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +83,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                     alarmReceiver.setRepeatingAlarm(getActivity(), AlarmReceiver.TYPE_REPEATING, time, title, message);
                 } else {
+                    Log.d("daily_reminder", "Not Setting");
                     alarmReceiver.cancelAlarm(getActivity(), AlarmReceiver.TYPE_REPEATING);
                 }
                 return true;
